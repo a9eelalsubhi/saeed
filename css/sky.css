@@ -1,0 +1,33 @@
+/* ============ سماء الليل: درب التبانة والشفق القطبي ============ */
+body { background: #0a1330; }
+.sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; opacity: 1;
+  background:
+    radial-gradient(120% 60% at 50% 108%, rgba(64, 120, 190, .55) 0%, transparent 60%),
+    linear-gradient(180deg, #050b1f 0%, #0a1636 38%, #122a58 72%, #1d4078 100%); }
+.sky canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#milky { opacity: .9; mix-blend-mode: screen; }
+
+/* الشفق القطبي: شرائط ملونة ناعمة تتموج بهدوء */
+.aurora { position: absolute; inset: -10% -20% 30% -20%; filter: blur(40px) saturate(1.3); opacity: .8; mix-blend-mode: screen; }
+.aurora i { position: absolute; display: block; border-radius: 50%; transform-origin: 50% 50%; }
+.aurora .a1 { left: 5%; top: 18%; width: 70%; height: 22%; background: radial-gradient(60% 50% at 50% 60%, rgba(70, 230, 180, .75), transparent 70%); transform: rotate(-12deg); animation: aur1 26s ease-in-out infinite alternate; }
+.aurora .a2 { left: 35%; top: 8%; width: 60%; height: 26%; background: radial-gradient(60% 50% at 50% 55%, rgba(60, 170, 255, .7), transparent 70%); transform: rotate(-20deg); animation: aur2 32s ease-in-out infinite alternate; }
+.aurora .a3 { left: 15%; top: 30%; width: 55%; height: 16%; background: radial-gradient(60% 50% at 50% 50%, rgba(150, 120, 255, .45), transparent 70%); transform: rotate(-6deg); animation: aur3 38s ease-in-out infinite alternate; }
+@keyframes aur1 { to { transform: rotate(-6deg) translate3d(6%, 4%, 0) scaleX(1.15); opacity: .7; } }
+@keyframes aur2 { to { transform: rotate(-26deg) translate3d(-8%, 6%, 0) scaleX(.9); } }
+@keyframes aur3 { to { transform: rotate(-12deg) translate3d(10%, -4%, 0) scaleX(1.2); opacity: .6; } }
+
+/* الجبال: ظل خفيف تحت */
+.ridge { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 18vh; min-height: 110px; }
+.ridge path { stroke: none; }
+.ridge .r1 { fill: #0b1734; }
+.ridge .r2 { fill: #070f24; }
+
+/* الشعار في الهيدر */
+.head-row .logo { height: 34px; width: auto; display: block; filter: drop-shadow(0 2px 10px rgba(110, 170, 255, .35)); }
+
+/* الزجاج على السماء الزرقا */
+.glass { background: linear-gradient(160deg, rgba(160, 200, 255, .1), rgba(120, 160, 230, .04)); border-color: rgba(190, 215, 255, .14); }
+.next { background: linear-gradient(150deg, color-mix(in srgb, var(--c) 28%, rgba(140, 180, 255, .08)), rgba(120, 160, 230, .04) 70%); }
+.lghead { background: transparent; }
+@media (prefers-reduced-motion: reduce) { .aurora i { animation: none; } }

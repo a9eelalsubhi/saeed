@@ -1,0 +1,60 @@
+/* ============ التقويم الكامل: عرض الشهر بالمواعيد ============ */
+dialog.calfull { position: fixed; inset: 0; width: 100vw; height: 100dvh; max-width: 100vw; max-height: 100dvh; margin: 0; padding: 0; border: 0; color: var(--ink); background: transparent; }
+dialog.calfull::backdrop { background: rgba(4, 9, 26, .72); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+dialog.calfull[open] { display: flex; }
+.cf-wrap { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: calc(16px + var(--safe-t)) 20px calc(16px + var(--safe-b)); min-height: 0; }
+.cf-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.cf-title { display: flex; align-items: baseline; gap: 10px; }
+.cf-title h2 { font-size: 24px; }
+.cf-nav { display: flex; align-items: center; gap: 4px; }
+.cf-legend { flex: 1; display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; font-size: 12.5px; color: var(--ink-2); }
+.cf-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.cf-legend i { width: 9px; height: 9px; border-radius: 3px; background: var(--c); }
+
+.cf-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 14px; }
+.cf-cal { display: flex; flex-direction: column; min-height: 0; border-radius: 16px; overflow: hidden; border: 1px solid rgba(190, 215, 255, .14);
+  background: linear-gradient(160deg, rgba(150, 190, 255, .08), rgba(110, 150, 220, .035)); backdrop-filter: blur(18px) saturate(1.3); -webkit-backdrop-filter: blur(18px) saturate(1.3); }
+.cf-dow { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-bottom: 1px solid var(--line-2); }
+.cf-dow span { text-align: center; padding: 10px 4px; font-size: 13.5px; font-weight: 500; color: var(--ink-2); }
+.cf-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-auto-rows: minmax(0, 1fr); }
+.cf-cell { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 4px; padding: 6px 6px 8px; border-inline-start: 1px solid var(--line); border-bottom: 1px solid var(--line); cursor: pointer; transition: background .15s; }
+.cf-grid .cf-cell:nth-child(7n+1) { border-inline-start: 0; }
+.cf-cell:hover { background: rgba(255, 255, 255, .035); }
+.cf-cell.sel { background: rgba(127, 184, 255, .09); }
+.cf-cell.out { opacity: .38; }
+.cf-n { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 0 2px 2px; }
+.cf-n span { font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; min-width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; }
+.cf-n small { font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.cf-cell.today .cf-n span { background: var(--coral); color: #06172f; }
+.pill { display: flex; align-items: center; gap: 6px; width: 100%; min-width: 0; border: 0; border-radius: 8px; padding: 4px 8px; font-size: 13px; text-align: start; color: color-mix(in srgb, var(--c) 55%, #fff);
+  background: color-mix(in srgb, var(--c) 22%, rgba(10, 20, 50, .35)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 30%, transparent); transition: background .15s, transform .1s; }
+.pill:hover { background: color-mix(in srgb, var(--c) 34%, rgba(10, 20, 50, .35)); }
+.pill:active { transform: scale(.98); }
+.pill b { font-weight: 700; font-variant-numeric: tabular-nums; flex-shrink: 0; direction: ltr; }
+.pill span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); unicode-bidi: plaintext; }
+.pill.past { opacity: .5; }
+.cf-cell .more { align-self: center; border: 0; background: transparent; color: var(--ink-2); font-size: 12px; font-weight: 700; padding: 0 6px; border-radius: 6px; }
+.cf-cell .more:hover { background: var(--hover); color: var(--ink); }
+
+.cf-side { padding: 14px; display: flex; flex-direction: column; min-height: 0; }
+.cf-side .agenda { overflow-y: auto; min-height: 0; flex: 1; }
+
+@media (max-width: 1000px) {
+  .cf-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1.6fr) minmax(0, 1fr); }
+  .cf-legend { display: none; }
+}
+@media (max-width: 640px) {
+  .cf-wrap { padding: calc(10px + var(--safe-t)) 8px calc(10px + var(--safe-b)); gap: 8px; }
+  .cf-title h2 { font-size: 19px; }
+  .cf-title .muted { display: none; }
+  .cf-dow span { font-size: 11px; padding: 6px 0; }
+  .cf-cell { padding: 3px 2px 4px; gap: 2px; }
+  .cf-n { padding: 0; justify-content: center; }
+  .cf-n small { display: none; }
+  .cf-n span { font-size: 13px; min-width: 24px; height: 24px; }
+  /* في الجوال المواعيد خطوط ملونة صغيرة، والتفاصيل تحت */
+  .pill { padding: 2px 3px; font-size: 10px; border-radius: 4px; gap: 2px; }
+  .pill b { display: none; }
+  .cf-cell .more { font-size: 10px; }
+  .cf-side { padding: 10px; }
+}

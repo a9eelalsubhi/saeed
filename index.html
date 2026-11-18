@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-bg="sunset">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>سعيد · مدار</title>
+  <meta name="description" content="لوحتي: يومي، محاضراتي، مهامي، الصلاة والماتشات، ومساعد يفهم كلامي — في شاشة وحدة.">
+  <meta name="theme-color" content="#0a1330">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="سعيد">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/img/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/img/icon-180.png">
+  <script src="js/fonts.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/sky.css">
+  <link rel="stylesheet" href="css/calendar.css">
+  <link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+  <div class="sky" aria-hidden="true">
+    <canvas id="milky"></canvas>
+    <div class="aurora"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
+    <canvas id="stars"></canvas>
+    <svg class="ridge" viewBox="0 0 1440 220" preserveAspectRatio="none"><path class="r1" d="M0 150 L90 118 L160 140 L250 92 L330 128 L410 80 L470 104 L560 60 L640 112 L720 86 L800 126 L880 70 L960 110 L1040 88 L1120 130 L1210 96 L1290 124 L1370 100 L1440 118 V220 H0Z"/><path class="r2" d="M0 186 L120 160 L210 176 L320 148 L420 172 L540 140 L650 170 L760 150 L870 178 L990 146 L1100 172 L1220 154 L1330 176 L1440 160 V220 H0Z"/></svg>
+  </div>
+
+  <div class="page">
+    <header class="page-head">
+      <div class="head-row">
+        <span class="wordlogo" id="wordLogo">سعيد</span>
+        <h1 class="title" id="greeting">مساء الخير</h1>
+        <div class="props">
+          <span id="gdate"></span><span class="sep">·</span><span id="hdate"></span><span class="sep">·</span><span class="clock"><span id="clock"></span> <span id="ampm"></span></span>
+          <span id="miniClock" hidden></span><span id="miniPray" hidden></span>
+        </div>
+        <div class="head-tools">
+          <span class="sync-state" id="syncState" title="المزامنة"><svg><use href="#i-cloud"/></svg><span></span></span>
+          <button class="btn ghost sm" id="btnWeek"><svg><use href="#i-chart"/></svg>ملخص الأسبوع</button>
+          <button class="btn ghost sm" id="btnEdit"><svg><use href="#i-edit"/></svg>تخصيص</button>
+          <button class="icon-btn" id="btnSettings" aria-label="الإعدادات"><svg><use href="#i-gear"/></svg></button>
+        </div>
+      </div>
+      <div class="head-row2">
+        <div class="cmd-wrap">
+          <form class="cmd glass" id="composer" autocomplete="off">
+            <button type="button" class="mic" id="mic" aria-label="تكلم"><svg><use href="#i-mic"/></svg></button>
+            <input id="cmd" aria-label="اكتب للمساعد" placeholder="قول أو اكتب: موعد اسنان الخميس ٤ العصر · شربت كاسة ماء · خلصت مذاكرة Coordination" enterkeyhint="send">
+            <button type="button" class="hist" id="btnHist" aria-label="المحادثة"><svg><use href="#i-chat"/></svg></button>
+            <button type="submit" class="send" aria-label="إرسال"><svg><use href="#i-send"/></svg></button>
+          </form>
+          <div class="replies glass" id="replies" hidden><div class="chat" id="chat"></div></div>
+        </div>
+        <blockquote class="hadith-line" id="hadithCard"></blockquote>
+      </div>
+    </header>
+
+    <main class="dash">
+      <!-- ١: اليوم -->
+      <div class="col">
+        <div class="next" id="nextCard" data-blk="next"></div>
+        <section class="glass panel grow" data-blk="day">
+          <div class="panel-h">
+            <div><h2 id="dayTitle"></h2><p class="muted" id="daySub"></p></div>
+            <div class="day-nav">
+              <button class="icon-btn sm" id="dayPrev" aria-label="اليوم السابق"><svg><use href="#i-chev-r"/></svg></button>
+              <button class="icon-btn sm" id="dayNext" aria-label="اليوم التالي"><svg><use href="#i-chev-l"/></svg></button>
+              <button class="btn sm" data-add-event><svg><use href="#i-plus"/></svg>موعد</button>
+            </div>
+          </div>
+          <div class="agenda scroll" id="agenda"></div>
+        </section>
+      </div>
+
+      <!-- ٢: الامتحان والمحاضرات -->
+      <div class="col">
+        <section class="exam" id="examCard" data-blk="exam"></section>
+        <section class="glass panel grow lec" data-blk="lec">
+          <div class="panel-h">
+            <div class="lec-title"><h2 id="modTitle">المحاضرات</h2><p class="muted" id="modSub"></p></div>
+            <select class="mini-select" id="modSelect" aria-label="الموديول"></select>
+            <button class="btn sm" id="btnAddLecture"><svg><use href="#i-plus"/></svg>محاضرة</button>
+          </div>
+          <div class="prog3" id="prog3"></div>
+          <div class="views">
+            <div class="subj-chips" id="subjChips"></div>
+            <label class="switch"><input type="checkbox" id="onlyLeft"><span></span>اللي باقي</label>
+          </div>
+          <div class="db-head"><span>أسبوع</span><span>المحاضرة</span><span>مذاكرة</span><span>مراجعة</span><span>MCQ</span><span></span></div>
+          <div class="ltable scroll" id="lecTable"></div>
+        </section>
+      </div>
+
+      <!-- ٣: العادات والمهام والملاحظات -->
+      <div class="col">
+        <section class="glass panel" data-blk="habits">
+          <div class="panel-h"><h2 data-title>عاداتي اليوم</h2><span class="muted" id="habitCount"></span></div>
+          <div class="habits" id="habits"></div>
+        </section>
+        <section class="glass panel grow" data-blk="tasks">
+          <div class="panel-h"><h2 data-title>المهام</h2><span class="muted" id="taskCount"></span></div>
+          <ul class="tasklist scroll" id="tasksOpen"></ul>
+          <form class="quickadd" id="taskForm">
+            <span class="plus" aria-hidden="true"><svg><use href="#i-plus"/></svg></span>
+            <input placeholder="مهمة جديدة…" name="t" aria-label="مهمة جديدة">
+          </form>
+        </section>
+        <section class="glass panel pray-card" aria-label="مواقيت الصلاة" data-blk="pray">
+          <div class="panel-h"><h2 data-title>الصلاة</h2><span class="p-next" id="prayNext"></span></div>
+          <div class="p-grid" id="prayGrid"></div>
+        </section>
+      </div>
+
+      <!-- ٤: الصلاة والتقويم والماتشات -->
+      <div class="col side scroll">
+        <section class="glass panel cal-card" data-blk="cal">
+          <div class="cal-head">
+            <button class="icon-btn sm" id="calPrev" aria-label="الشهر السابق"><svg><use href="#i-chev-r"/></svg></button>
+            <div class="cal-t"><h2 id="calTitle"></h2><p class="muted" id="calHijri"></p></div>
+            <button class="icon-btn sm" id="calNext" aria-label="الشهر التالي"><svg><use href="#i-chev-l"/></svg></button>
+            <button class="icon-btn sm" id="calExpand" aria-label="التقويم الكامل" title="التقويم الكامل"><svg><use href="#i-expand"/></svg></button>
+          </div>
+          <div class="cal-dow"><span>ح</span><span>ن</span><span>ث</span><span>ر</span><span>خ</span><span>ج</span><span>س</span></div>
+          <div class="cal-grid" id="calGrid"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- التقويم الكامل -->
+  <dialog id="calDlg" class="calfull" aria-label="التقويم الكامل">
+    <div class="cf-wrap">
+      <header class="cf-head">
+        <div class="cf-title"><h2 id="cfTitle"></h2><span class="muted" id="cfHijri"></span></div>
+        <div class="cf-nav">
+          <button class="icon-btn" id="cfPrev" aria-label="الشهر السابق"><svg><use href="#i-chev-r"/></svg></button>
+          <button class="btn ghost sm" id="cfToday">اليوم</button>
+          <button class="icon-btn" id="cfNext" aria-label="الشهر التالي"><svg><use href="#i-chev-l"/></svg></button>
+        </div>
+        <div class="cf-legend" id="cfLegend"></div>
+        <button class="btn sm" id="cfAdd"><svg><use href="#i-plus"/></svg>موعد</button>
+        <button class="icon-btn" id="cfClose" aria-label="إغلاق"><svg><use href="#i-x"/></svg></button>
+      </header>
+      <div class="cf-body">
+        <div class="cf-cal">
+          <div class="cf-dow"><span>الأحد</span><span>الاثنين</span><span>الثلاثاء</span><span>الأربعاء</span><span>الخميس</span><span>الجمعة</span><span>السبت</span></div>
+          <div class="cf-grid" id="cfGrid"></div>
+        </div>
+        <aside class="cf-side glass">
+          <div class="panel-h"><div><h3 id="cfDayTitle"></h3><p class="muted" id="cfDaySub"></p></div><button class="btn ghost sm" data-add-event><svg><use href="#i-plus"/></svg>موعد</button></div>
+          <div class="agenda" id="cfAgenda"></div>
+        </aside>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- الدخول للمزامنة -->
+  <dialog id="loginDlg" class="sheet">
+    <form id="loginForm">
+      <header class="sheet-h"><h2>كلمة سر مدار</h2><button type="button" value="cancel" class="icon-btn" id="loginClose" aria-label="إغلاق"><svg><use href="#i-x"/></svg></button></header>
+      <p class="muted" style="font-size:14px;line-height:1.7">اكتب كلمة سر تختارها (نفسها في الجوال والبي سي). تكتبها <b>مرة وحدة بس</b> في كل جهاز، وبعدها أي شي تسويه في جهاز يطلع في الثاني لحاله.</p>
+      <label>كلمة السر<input type="password" name="pass" autocomplete="current-password" minlength="6" required placeholder="٦ حروف أو أكثر"></label>
+      <p class="muted small" id="loginErr" role="alert"></p>
+      <footer class="sheet-f"><button type="button" class="btn ghost" id="loginLater">بعدين</button><button class="btn" id="loginGo">دخول</button></footer>
+    </form>
+  </dialog>
+
+  <!-- ملخص الأسبوع -->
+  <dialog id="weekDlg" class="sheet wide">
+    <form method="dialog">
+      <header class="sheet-h"><h2 id="weekTitle">ملخص الأسبوع</h2><button value="cancel" class="icon-btn" aria-label="إغلاق"><svg><use href="#i-x"/></svg></button></header>
+      <div id="weekBody"></div>
+    </form>
+  </dialog>
+
+  <!-- نافذة الموعد -->
+  <dialog id="eventDlg" class="sheet">
+    <form method="dialog" id="eventForm">
+      <header class="sheet-h"><h2 id="eventDlgTitle">موعد جديد</h2><button value="cancel" class="icon-btn" aria-label="إغلاق"><svg><use href="#i-x"/></svg></button></header>
+      <label>العنوان<input name="title" required placeholder="مثلاً: موعد أسنان"></label>
+      <div class="catpick" id="catPick"></div>
+      <div class="row">
+        <label>اليوم<input type="date" name="date" required></label>
+        <label class="chk"><input type="checkbox" name="allDay"> طول اليوم</label>
+      </div>
+      <div class="row times">
+        <label>من<input type="time" name="start"></label>
+        <label>إلى<input type="time" name="end"></label>
+      </div>
+      <label>التذكير
+        <select name="remind">
+          <option value="0">بدون</option><option value="5">قبل ٥ دقايق</option><option value="15">قبل ربع ساعة</option>
+          <option value="30">قبل نص ساعة</option><option value="60">قبل ساعة</option><option value="120">قبل ساعتين</option>
+          <option value="1440">قبل يوم</option>
+        </select>
+      </label>
+      <label>ملاحظات<textarea name="notes" rows="2" placeholder="اختياري"></textarea></label>
+      <footer class="sheet-f">
+        <button type="button" class="btn danger ghost" id="eventDelete"><svg><use href="#i-trash"/></svg>حذف</button>
+        <button type="button" class="btn ghost" id="eventIcs"><svg><use href="#i-bell"/></svg>للآيفون</button>
+        <button value="save" class="btn">حفظ</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- نافذة المحاضرة -->
+  <dialog id="lecDlg" class="sheet">
+    <form method="dialog" id="lecForm">
+      <header class="sheet-h"><h2 id="lecDlgTitle">محاضرة جديدة</h2><button value="cancel" class="icon-btn" aria-label="إغلاق"><svg><use href="#i-x"/></svg></button></header>
+      <label>اسم المحاضرة<input name="title" required placeholder="مثلاً: Physiology of pain" dir="auto"></label>
+      <div class="row">
+        <label>المادة<select name="subject" id="lecSubject"></select></label>
+        <label>الأسبوع<select name="week"><option value="">—</option><option>W1</option><option>W2</option><option>W3</option><option>W4</option><option>W5</option><option>W6</option><option>W7</option><option>W8</option></select></label>
+      </div>
+      <label>الموديول<input name="module" list="modList" placeholder="Neurological and Behavioural Sciences" dir="auto"><datalist id="modList"></datalist></label>
+      <div class="checks3">
+        <label><input type="checkbox" name="study"><span>مذاكرة</span></label>
+        <label><input type="checkbox" name="rev"><span>مراجعة</span></label>
+        <label><input type="checkbox" name="mcq"><span>أسئلة MCQ</span></label>
+      </div>
+      <label>رابط (يوتيوب، درايف…)<input type="url" name="link" placeholder="https://" dir="ltr"></label>
+      <label class="file">ملف (PDF، سلايدات، فيديو)
+        <input type="file" name="file" accept=".pdf,.ppt,.pptx,.doc,.docx,image/*,video/*">
+        <span class="muted" id="lecFileName"></span>
+      </label>
+      <label>ملاحظات<textarea name="notes" rows="2" placeholder="وش الصعب فيها؟"></textarea></label>
+      <footer class="sheet-f">
+        <button type="button" class="btn danger ghost" id="lecDelete"><svg><use href="#i-trash"/></svg>حذف</button>
+        <button value="save" class="btn">حفظ</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- الإعدادات -->
+  <dialog id="settingsDlg" class="sheet">
+    <form method="dialog">
+      <header class="sheet-h"><h2>الإعدادات</h2><button value="cancel" class="icon-btn" aria-label="إغلاق"><svg><use href="#i-x"/></svg></button></header>
+      <div class="setting">
+        <div><b>المزامنة بين أجهزتك</b><p class="muted" id="syncInfo"></p></div>
+        <div class="btns"><button type="button" class="btn sm" id="btnSyncAccount"></button></div>
+      </div>
+      <div class="setting col">
+        <div><b>المظهر</b><p class="muted">غيّر الخلفية والألوان وشكل البطاقات. كل شي ينحفظ ويتزامن مع أجهزتك.</p></div>
+        <div class="appear" id="appearance"></div>
+      </div>
+      <div class="setting">
+        <div><b>اسمك</b><p class="muted">اللي يطلع في الترحيب</p></div>
+        <input id="nameInput" class="mini-input">
+      </div>
+      <div class="setting">
+        <div><b>التنبيهات</b><p class="muted">ينبهك قبل المواعيد والتطبيق مفتوح. للتنبيه المضمون استخدم «للآيفون».</p></div>
+        <button type="button" class="btn sm" id="btnNotif">تفعيل</button>
+      </div>
+      <div class="setting">
+        <div><b>كل المواعيد للآيفون</b><p class="muted">ملف واحد فيه مواعيدك الجاية مع التنبيهات.</p></div>
+        <button type="button" class="btn sm" id="btnIcsAll">تنزيل</button>
+      </div>
+      <div class="setting">
+        <div><b>نسخة احتياطية</b><p class="muted">بياناتك في جهازك. نزّل نسخة كل فترة.</p></div>
+        <div class="btns"><button type="button" class="btn sm" id="btnExport">تنزيل</button><label class="btn sm ghost">استرجاع<input type="file" id="importFile" accept="application/json" hidden></label></div>
+      </div>
+      <p class="muted center small">مدار سعيد · يشتغل بدون نت</p>
+    </form>
+  </dialog>
+
+  <div class="edit-bar glass" id="editBar" hidden>
+    <span><b>وضع التخصيص</b> <span class="muted">حرّك الأقسام بالأسهم، غيّر أسماءها، أخفِها، أو أضف قسم جديد من «+ قسم» تحت كل عمود</span></span>
+    <button type="button" class="btn ghost sm" id="editLook">الألوان والخلفية</button>
+    <button type="button" class="btn sm" id="editDone">تم</button>
+  </div>
+
+  <dialog id="widgetDlg" class="sheet">
+    <form method="dialog" id="widgetForm">
+      <header class="sheet-h"><h2>قسم جديد</h2><button value="cancel" class="icon-btn" aria-label="إغلاق"><svg><use href="#i-x"/></svg></button></header>
+      <div class="w-types" id="wTypes"></div>
+      <label>اسم القسم<input name="title" id="wTitle" placeholder="مثلاً: أهداف الشهر 🎯" maxlength="40"></label>
+      <footer class="sheet-f"><button class="btn" value="ok" id="wCreate">إضافة</button></footer>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <svg width="0" height="0" style="position:absolute;top:0;left:0;overflow:hidden" aria-hidden="true">
+    <defs>
+      <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+      <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+      <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18h10a4 4 0 0 0 .5-8 6 6 0 0 0-11.5 2A3 3 0 0 0 7 18z"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+      <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3c1 3 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5 0 2 1 3 2 3 0-3-1-5 1-8.5z"/></symbol>
+      <symbol id="h-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+      <symbol id="h-drop" viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></symbol>
+      <symbol id="h-quran" viewBox="0 0 24 24"><path d="M12 6c-2-1.5-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5c-3-.5-6 0-8 1.5zM12 6v14.5"/></symbol>
+      <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5M5 14v6h14v-6"/></symbol>
+      <symbol id="i-expand" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></symbol>
+      <symbol id="i-tick" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+      <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+      <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v4M8 21h8"/></symbol>
+      <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 3 10.5l7 3 3 7.5z"/><path d="m10 13.5 4-4"/></symbol>
+      <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a3 3 0 0 1 2 1 3 3 0 0 1 2-1h6v15h-6a2 2 0 0 0-2 2 2 2 0 0 0-2-2H4z"/><path d="M12 5v16"/></symbol>
+      <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4"/></symbol>
+      <symbol id="i-note" viewBox="0 0 24 24"><path d="M5 4h10l4 4v12H5z"/><path d="M9 12h6M9 16h4"/></symbol>
+      <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+      <symbol id="i-chev-l" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></symbol>
+      <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></symbol>
+      <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+      <symbol id="c-study" viewBox="0 0 24 24"><path d="M4 4h6a3 3 0 0 1 2 1 3 3 0 0 1 2-1h6v15h-6a2 2 0 0 0-2 2 2 2 0 0 0-2-2H4z"/><path d="M12 5v16"/></symbol>
+      <symbol id="c-exam" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/></symbol>
+      <symbol id="c-health" viewBox="0 0 24 24"><path d="M20.8 8.6a5 5 0 0 0-8.8-3.2A5 5 0 0 0 3.2 8.6C3.2 14 12 20 12 20s8.8-6 8.8-11.4z"/><path d="M5 12h3l1.5-2.5 3 5 1.5-2.5h4"/></symbol>
+      <symbol id="c-meeting" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/></symbol>
+      <symbol id="c-deen" viewBox="0 0 24 24"><path d="M19 14.5A7.5 7.5 0 1 1 9.5 5a6 6 0 0 0 9.5 9.5z"/><path d="M17 3l.6 1.6L19 5l-1.4.4L17 7l-.6-1.6L15 5l1.4-.4z"/></symbol>
+      <symbol id="c-sport" viewBox="0 0 24 24"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></symbol>
+      <symbol id="c-social" viewBox="0 0 24 24"><path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5v3M12 3.5v3"/></symbol>
+      <symbol id="c-match" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8l3.5 2.5-1.3 4h-4.4l-1.3-4z"/><path d="M12 3v5M15.5 10.5l4.8-1.6M14.2 14.5l3 4M9.8 14.5l-3 4M8.5 10.5 3.7 8.9"/></symbol>
+      <symbol id="c-project" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3z"/></symbol>
+      <symbol id="c-personal" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+      <symbol id="s-anatomy" viewBox="0 0 24 24"><path d="M15.5 4.5a2.5 2.5 0 0 1 4 3 2.5 2.5 0 0 1-3 4L11.5 16.5a2.5 2.5 0 0 1-4 3 2.5 2.5 0 0 1-3-4 2.5 2.5 0 0 1 4-3L13.5 7.5a2.5 2.5 0 0 1 2-3z"/></symbol>
+      <symbol id="s-embryo" viewBox="0 0 24 24"><path d="M12 21v-9"/><path d="M12 12C12 7.5 8.5 5 4.5 5c0 4 3 7 7.5 7z"/><path d="M12 14.5c0-4 3-6.5 7.5-6.5 0 3.8-2.8 6.5-7.5 6.5z"/></symbol>
+      <symbol id="s-histo" viewBox="0 0 24 24"><path d="M6 21h12M10 3.5l4 2-3.5 7-4-2z"/><path d="M12.5 10.5a5 5 0 0 1 2.5 7.5M8.5 18h7"/></symbol>
+      <symbol id="s-biochem" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7 15h10"/></symbol>
+      <symbol id="s-physio" viewBox="0 0 24 24"><path d="M3 12h4l2.5-6 5 12 2.5-6h4"/></symbol>
+      <symbol id="s-patho" viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/><path d="M9.5 14.5a2.5 2.5 0 0 0 2.5 2.5"/></symbol>
+      <symbol id="s-pharma" viewBox="0 0 24 24"><rect x="2.5" y="8.5" width="19" height="7" rx="3.5" transform="rotate(-45 12 12)"/><path d="m8.5 8.5 7 7"/></symbol>
+      <symbol id="s-radio" viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><circle cx="12" cy="12" r="3.5"/></symbol>
+      <symbol id="s-micro" viewBox="0 0 24 24"><rect x="8" y="7" width="8" height="12" rx="4"/><path d="M12 7V5M4 12h4M16 12h4M5 18l3-2M19 18l-3-2M5 7l3 2M19 7l-3 2"/></symbol>
+      <symbol id="s-immuno" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/></symbol>
+      <symbol id="s-other" viewBox="0 0 24 24"><path d="M4 4h6a3 3 0 0 1 2 1 3 3 0 0 1 2-1h6v15h-6a2 2 0 0 0-2 2 2 2 0 0 0-2-2H4z"/></symbol>
+    </defs>
+  </svg>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="js/sky.js"></script>
+  <script src="js/parser.js"></script>
+  <script src="js/prayer.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/custom.js"></script>
+</body>
+</html>
